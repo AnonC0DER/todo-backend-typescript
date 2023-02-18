@@ -11,9 +11,10 @@ import Todo, { TodoModel } from "../models/todos"
 export const getTodo: RequestHandler = async (request: Request, response: Response, next: NextFunction) => {
     try {
         var todos = await Todo.find({})
+        var count: number = await Todo.countDocuments()
         return response
             .status(200)
-            .json({ todos: todos })
+            .json({ count: count ,todos: todos })
     } catch (error) {
         return response
             .status(500)
@@ -47,6 +48,22 @@ export const updateToDo: RequestHandler = async (request: Request, response: Res
             .json({ message: "Todo updated successfully", data: todo })
     } catch (error) {
         return response
+            .status(500)
+            .json({ error: error.message })
+    }
+}
+
+
+export const deleteToDo: RequestHandler = async (request: Request, response: Response, next: NextFunction) => {
+    try {
+        const { id } = request.params
+        var isDeleted = await Todo.findByIdAndDelete(id)
+        if ( !isDeleted ) throw new Error("Failed to delete Todo")
+        return response
+            .status(202)
+            .json({ message: "Todo deleted successfully", todo_id: id })
+    } catch (error) {
+        response
             .status(500)
             .json({ error: error.message })
     }
