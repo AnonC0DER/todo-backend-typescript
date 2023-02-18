@@ -5,7 +5,7 @@ import {
     NextFunction
 } from "express"
 
-import Todo from "../models/todos"
+import Todo, { TodoModel } from "../models/todos"
 
 
 export const getTodo: RequestHandler = async (request: Request, response: Response, next: NextFunction) => {
@@ -14,6 +14,37 @@ export const getTodo: RequestHandler = async (request: Request, response: Respon
         return response
             .status(200)
             .json({ todos: todos })
+    } catch (error) {
+        return response
+            .status(500)
+            .json({ error: error.message })
+    }
+}
+
+
+export const createTodo: RequestHandler = async (request: Request, response: Response, next: NextFunction) => {
+    try {
+        const data: TodoModel = request.body
+        console.log("Data", data)
+        var todo = await Todo.create(data)
+        return response
+            .status(201)
+            .json({ message: "Todo created successfully", data: todo })
+    } catch (error) {
+        return response
+            .status(500)
+            .json({ error: error.message })
+    }
+}
+
+
+export const updateToDo: RequestHandler = async (request: Request, response: Response, next: NextFunction) => {
+    try {
+        const { id } = request.params
+        var todo = await Todo.findByIdAndUpdate(id, request.body, {new: true})
+        return response
+            .status(202)
+            .json({ message: "Todo updated successfully", data: todo })
     } catch (error) {
         return response
             .status(500)

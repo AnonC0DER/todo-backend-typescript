@@ -7,7 +7,7 @@ import todoRoutes from "./routers/todos"
 const app = express()
 app.use(json())
 app.use(urlencoded({ extended: true }))
-app.use("/todos", todoRoutes)
+app.use("/api", todoRoutes)
 app.use((
         err: Error,
         req: express.Request,
