@@ -8,13 +8,33 @@ import {
 import Todo, { TodoModel } from "../models/todos"
 
 
-export const getTodo: RequestHandler = async (request: Request, response: Response, next: NextFunction) => {
+export const getTodos: RequestHandler = async (request: Request, response: Response, next: NextFunction) => {
     try {
         var todos = await Todo.find({})
         var count: number = await Todo.countDocuments()
         return response
             .status(200)
             .json({ count: count ,todos: todos })
+    } catch (error) {
+        return response
+            .status(500)
+            .json({ error: error.message })
+    }
+}
+
+
+export const getTodo: RequestHandler = async (request: Request, response: Response, next: NextFunction) => {
+    try {
+        const { id } = request.params
+        var todo = await Todo.findById(id)
+        if (!todo) {
+            return response
+                .status(404)
+                .json({ message: "Todo not found" })
+        }
+        return response
+            .status(200)
+            .json({ todo: todo })
     } catch (error) {
         return response
             .status(500)
